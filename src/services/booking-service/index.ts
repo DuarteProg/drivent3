@@ -50,8 +50,9 @@ async function updateBooking(userId: number, bookingId: number, roomId: number) 
 
   if(getallBook.userId !== userId) throw forbidden();
 
-  const bookingsRoom = await bookingRepository.countBook(roomId);
-  if(bookingsRoom >= getBooking.Room.capacity ) throw forbidden();
+  const bookingsRoom = await bookingRepository.getQTDroomCapacity(userId);
+  const bookList = bookingsRoom.length + 1;
+  if(bookList >= Number(book.Room.capacity)) throw forbidden();
 
   const bookingUpdate = await bookingRepository.bookUpdate(bookingId, roomId);
   return bookingUpdate;

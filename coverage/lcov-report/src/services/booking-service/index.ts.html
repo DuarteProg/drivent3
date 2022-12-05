@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">80.48% </span>
+                <span class="strong">75.55% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>33/41</span>
+                <span class='fraction'>34/45</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">64.28% </span>
+                <span class="strong">66.66% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>9/14</span>
+                <span class='fraction'>10/15</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">84.84% </span>
+                <span class="strong">77.77% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>28/33</span>
+                <span class='fraction'>28/36</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line medium'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -140,7 +140,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -152,7 +151,6 @@
 <span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">6x</span>
@@ -162,27 +160,29 @@
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -197,28 +197,26 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { notFoundError, unauthorizedError, paymentRequiredError, forbidden } from '@/errors';
-import enrollmentRepository from '@/repositories/enrollment-repository';
-import bookingRepository from '@/repositories/booking-repository';
-import { TicketStatus } from '@prisma/client';
-import ticketRepository from '@/repositories/ticket-repository';
-import hotelRepository from '@/repositories/hotel-repository';
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { notFoundError, unauthorizedError, paymentRequiredError, forbidden } from "@/errors";
+import enrollmentRepository from "@/repositories/enrollment-repository";
+import bookingRepository from "@/repositories/booking-repository";
+import { TicketStatus } from "@prisma/client";
+import ticketRepository from "@/repositories/ticket-repository";
+import hotelRepository from "@/repositories/hotel-repository";
 &nbsp;
 async function getBooking(userId: number) {
   const getBooking = await bookingRepository.showBooking(userId);
-  
   
   if (!getBooking) {
     throw notFoundError();
   }
 &nbsp;
   return getBooking;
-};
+}
 &nbsp;
 async function createBooking(userId: number, roomId: number) {
-    const getBooking = await bookingRepository.showBooking(userId);
+  const getBooking = await bookingRepository.showBooking(userId);
   const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
-&nbsp;
 &nbsp;
   if (!enrollment) throw notFoundError();
 &nbsp;
@@ -229,32 +227,34 @@ async function createBooking(userId: number, roomId: number) {
   if (ticketeTciketType.status === TicketStatus.RESERVED) throw paymentRequiredError();
 &nbsp;
   if (ticketeTciketType.TicketType.isRemote === true || ticketeTciketType.TicketType.includesHotel === false)
-  throw unauthorizedError();
+    throw unauthorizedError();
   
   if (!getBooking) throw notFoundError();
   
   const bookingsRoom = await bookingRepository.countBook(roomId);
-  
-  
  
-  <span class="missing-if-branch" title="if path not taken" >I</span>if(bookingsRoom &gt;= getBooking.Room.capacity ) <span class="cstat-no" title="statement not covered" >throw forbidden();</span>
-  return getBooking;
-};
+  if(bookingsRoom &gt;= getBooking.Room.capacity ) throw forbidden();
+<span class="cstat-no" title="statement not covered" >  return getBooking;</span>
+}
 &nbsp;
 async function updateBooking(userId: number, bookingId: number, roomId: number) {
-const book = await bookingRepository.showBooking(userId);
-const getBooking = await bookingRepository.showBooking(userId);
+  const book = await bookingRepository.showBooking(userId);
+  const getBooking = await bookingRepository.showBooking(userId);
+  const getallBook = await bookingRepository.showBookingAllBook(bookingId);
 &nbsp;
-const room = await hotelRepository.getHotelByHotelId(roomId);
-if(!room) throw notFoundError();
+  const room = await hotelRepository.getHotelByHotelId(roomId);
+  if(!room) throw notFoundError();
 &nbsp;
-<span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="if path not taken" >I</span>if(!book || book.id !== bookingId) <span class="cstat-no" title="statement not covered" >throw unauthorizedError();</span></span>
+<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if(!book || book.id !== bookingId) <span class="cstat-no" title="statement not covered" >throw unauthorizedError();</span></span>
 &nbsp;
-const bookingsRoom = <span class="cstat-no" title="statement not covered" >await bookingRepository.countBook(roomId);</span>
-<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if(bookingsRoom &gt;= getBooking.Room.capacity ) <span class="cstat-no" title="statement not covered" >throw forbidden();</span></span>
+<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if(getallBook.userId !== userId) <span class="cstat-no" title="statement not covered" >throw forbidden();</span></span>
 &nbsp;
-const bookingUpdate = <span class="cstat-no" title="statement not covered" >await bookingRepository.bookUpdate(bookingId, roomId)</span>
-<span class="cstat-no" title="statement not covered" >return bookingUpdate</span>
+  const bookingsRoom = <span class="cstat-no" title="statement not covered" >await bookingRepository.getQTDroomCapacity(userId);</span>
+  const bookList = <span class="cstat-no" title="statement not covered" >bookingsRoom.length + 1;</span>
+<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if(bookList &gt;= Number(book.Room.capacity)) <span class="cstat-no" title="statement not covered" >throw forbidden();</span></span>
+&nbsp;
+  const bookingUpdate = <span class="cstat-no" title="statement not covered" >await bookingRepository.bookUpdate(bookingId, roomId);</span>
+<span class="cstat-no" title="statement not covered" >  return bookingUpdate;</span>
 }
 &nbsp;
 const bookingService = {
@@ -271,7 +271,7 @@ export default bookingService;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at Mon Dec 05 2022 17:49:29 GMT-0300 (Horário Padrão de Brasília)
+                at Mon Dec 05 2022 20:44:50 GMT-0300 (Horário Padrão de Brasília)
             </div>
         <script src="../../../prettify.js"></script>
         <script>

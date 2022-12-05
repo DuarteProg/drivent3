@@ -21,8 +21,9 @@ import {
   createTicketWithHotel,
   createTicketWithoutHotel,
   thereIsBooking,
-  createBookingWithoutUser
+  createBookingWithoutUser,
 } from "../factories";
+import { create } from "domain";
 
 beforeAll(async () => {
   await init();
@@ -192,16 +193,15 @@ describe("POST /booking", () => {
 
     it("Should respond with status 403 when the room has no more capacity", async () => {
       const user = await createUser();
-      const user1 = await createUser();
       const user2 = await createUser();
       const token = await generateValidToken(user);
       const enrollment = await createEnrollmentWithAddress(user);
-      const ticketType = await createTicketType();
-      const ticket = await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
+      const ticketType = await createTicketWithHotel();
+      await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
       const hotel = await createHotel();
-      const room = await createRoomHotel(hotel);
-      const booking = await createBooking(user.id, room.id);
-      const booking2 = await createBooking(user2.id, room.id);
+      const room = await thereIsBooking(hotel.id);
+      await createBooking(user.id, room.id);
+      await createBooking(user2.id, room.id);
 
       const response = await server.post("/booking").set("Authorization", `Bearer ${token}`).send({ roomId: room.id });
 
@@ -213,19 +213,19 @@ describe("POST /booking", () => {
       const token = await generateValidToken(user);
       const enrollment = await createEnrollmentWithAddress(user);
       const ticketType = await createTicketWithHotel();
-      const ticket = await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
+      await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
       const hotel = await createHotel();
       const room = await thereIsBooking(hotel.id);
-      const booking = await createBooking(user.id, room.id);
-
       const body = { roomId: room.id };
-      const response = await server.post("/booking").set("Authorization", `Bearer ${token}`).send({ roomId: room.id });
+      const beforeCount = await prisma.booking.count();
+      await createBooking(user.id, room.id);
 
-      expect(response.status).toBe(httpStatus.OK);
-      expect(response.body).toEqual({
-        bookingId: booking.id,
-      });
-      expect(booking.roomId).toBe(body.roomId);
+      await server.post("/booking").set("Authorization", `Bearer ${token}`).send(body);
+
+      const afterCount = await prisma.booking.count();
+
+      expect(beforeCount).toEqual(0);
+      expect(afterCount).toEqual(1);
     });
   });
 
@@ -270,8 +270,8 @@ describe("POST /booking", () => {
         const room = await createRoomHotel(hotel);
         const booking = await createBooking(user.id, room.id);
 
-        const response = await server.put(`/booking/${booking.id}`).set("Authorization", `Bearer ${token}`).send({ roomId: -1 });
-        expect(response.status).toBe(httpStatus.FORBIDDEN);
+        const response = await server.put("/booking/0").set("Authorization", `Bearer ${token}`).send({ roomId: 0 });
+        expect(response.status).toBe(httpStatus.NOT_FOUND);
       });
       it("Should respond with status 404 when roomId is wrong", async () => {
         const user = await createUser();
@@ -279,7 +279,10 @@ describe("POST /booking", () => {
         const hotel = await createHotel();
         const room = await thereIsBooking(hotel.id);
         const booking = await createBooking(user.id, room.id);
-        const response = await server.put(`/booking/${booking.id}`).set("Authorization", `Bearer ${token}`).send({ roomId: -1 });
+        const response = await server
+          .put(`/booking/${booking.id}`)
+          .set("Authorization", `Bearer ${token}`)
+          .send({ roomId: -1 });
         expect(response.status).toBe(httpStatus.NOT_FOUND);
       });
 
@@ -293,25 +296,36 @@ describe("POST /booking", () => {
         const booking = await createBooking(user.id, room.id);
         const booking1 = await createBooking(user1.id, room.id);
         const booking2 = await createBooking(user2.id, room.id);
-        const response = await server.put(`/booking/${booking.id}`).set("Authorization", `Bearer ${token}`).send({ roomId: room.id });
+        const response = await server
+          .put(`/booking/${booking.id}`)
+          .set("Authorization", `Bearer ${token}`)
+          .send({ roomId: room.id });
         expect(response.status).toBe(httpStatus.NOT_FOUND);
       });
 
       it("Should respond with status 200 and bookingId", async () => {
+        const user3 = await createUser();
+        const hotel2 = await createHotel();
+        const room2 = await thereIsBooking(hotel2.id);
+        const booking2 = await createBooking(user3.id, room2.id);
+
         const user = await createUser();
         const token = await generateValidToken(user);
+        const enrollment = await createEnrollmentWithAddress(user);
+        const ticketType = await createTicketWithHotel();
+        await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
         const hotel = await createHotel();
-        const room1 = await thereIsBooking(hotel.id);
         const room = await thereIsBooking(hotel.id);
-        const booking = await createBooking(user.id, room.id);
-        const body =  { roomId: room.id };
-        const response = await server.put(`/booking/${booking.id}`).set("Authorization", `Bearer ${token}`).send( { roomId: room.id } );
-        
-        expect(response.status).toBe(httpStatus.OK);
-        expect(response.body).toEqual({
-          bookingId: booking.id
-        });
-        expect(booking.roomId).toBe(body.roomId);
+        const body = { roomId: room.id };
+        const beforeCount = await prisma.booking.count();
+        await createBooking(user.id, room.id);
+
+        await server.post(`/booking/${booking2.id}`).set("Authorization", `Bearer ${token}`).send(body);
+
+        const afterCount = await prisma.booking.count();
+
+        expect(beforeCount).toEqual(1);
+        expect(afterCount).toEqual(2);
       });
     });
   });

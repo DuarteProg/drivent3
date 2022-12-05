@@ -50,12 +50,21 @@ async function bookUpdate(bookingId: number, roomId: number) {
   });
 }
 
+async function getQTDroomCapacity(userId: number) { 
+  return prisma.booking.findMany({
+    where: {
+      userId
+    }
+  });
+}
+
 const bookingRepository = {
   showBooking,
   postBooking,
   countBook,
   bookUpdate,
-  showBookingAllBook
+  showBookingAllBook,
+  getQTDroomCapacity
 };
     
 export default bookingRepository;
