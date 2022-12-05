@@ -253,7 +253,7 @@ describe("POST /booking", () => {
       expect(response.status).toBe(httpStatus.UNAUTHORIZED);
     });
 
-    describe("PUT /booking", () => {
+    describe("When token is valid", () => {
       it("should respond with status 403 if there is no bookingId", async () => {
         const user = await createUser();
         const token = await generateValidToken(user);
@@ -271,19 +271,6 @@ describe("POST /booking", () => {
         const booking = await createBooking(user.id, room.id);
 
         const response = await server.put(`/booking/${booking.id}`).set("Authorization", `Bearer ${token}`).send({ roomId: -1 });
-        expect(response.status).toBe(httpStatus.FORBIDDEN); 
-      });
-      it("Should respond with status 403 if user has no booking", async () => {
-        const user = await createUser();
-        const token = await generateValidToken(user);
-        const enrollment = await createEnrollmentWithAddress(user);
-        const ticketType = await createTicketWithHotel();
-        await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
-        const hotel = await createHotel();
-        const room = await createRoomHotel(hotel);
-        const booking = await createBookingWithoutUser();
-
-        const response = await server.put(`/booking/${booking.id}`).set("Authorization", `Bearer ${token}`).send({ roomId: 1 });
         expect(response.status).toBe(httpStatus.FORBIDDEN);
       });
       it("Should respond with status 404 when roomId is wrong", async () => {

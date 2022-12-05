@@ -44,7 +44,7 @@ async function updateBooking(userId: number, bookingId: number, roomId: number) 
   const getallBook = await bookingRepository.showBookingAllBook(bookingId);
 
   const room = await hotelRepository.getHotelByHotelId(roomId);
-  if(!room) throw forbidden();
+  if(!room) throw notFoundError();
 
   if(!book || book.id !== bookingId) throw unauthorizedError();
 
